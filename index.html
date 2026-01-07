@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <title>HOST - Clapback Game</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #1e272e; color: white; display: flex; height: 100vh; margin: 0; overflow: hidden; }
+        .sit-panel { width: 35%; background: #2c3e50; padding: 40px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 5px 0 15px rgba(0,0,0,0.3); z-index: 2; position: relative; }
+        .card-sit { background: white; color: #c0392b; padding: 30px; border-radius: 15px; font-size: 1.5rem; font-weight: 800; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); width: 100%; min-height: 250px; display: flex; align-items: center; justify-content: center; border: 5px solid #c0392b; line-height: 1.4; }
+        .wild-card { background: #8e44ad; color: white; padding: 15px 20px; border-radius: 50px; margin-top: 30px; font-size: 1.3rem; font-weight: bold; border: 3px solid white; display: none; animation: pop 0.4s; }
+        .resp-panel { width: 65%; background: #ecf0f1; padding: 30px; display: flex; flex-direction: column; }
+        .resp-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; color: #7f8c8d; font-weight: bold; }
+        .resp-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; align-content: start; padding-bottom: 20px; }
+        .resp-card { padding: 20px; border-radius: 10px; color: white; font-size: 0.95rem; font-weight: 600; box-shadow: 0 3px 6px rgba(0,0,0,0.2); animation: slideUp 0.5s; position: relative; line-height: 1.4; }
+        .card-green { background: #27ae60; border-left: 10px solid #2ecc71; }
+        .card-orange { background: #e67e22; border-left: 10px solid #f39c12; }
+        .card-red   { background: #c0392b; border-left: 10px solid #e74c3c; }
+        .badge { position: absolute; top: -10px; right: -10px; padding: 5px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .badge-green { background: #2ecc71; color: #006400; }
+        .badge-orange { background: #f39c12; color: #8e44ad; }
+        .badge-red { background: #e74c3c; color: white; }
+        .controls { position: absolute; bottom: 30px; display: flex; gap: 10px; }
+        button { padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1rem; transition: transform 0.1s; }
+        button:active { transform: scale(0.95); }
+        .btn-reset { background: #95a5a6; color: white; }
+        .btn-wild { background: #8e44ad; color: white; }
+        .btn-next { background: #f1c40f; color: #2c3e50; }
+        @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes pop { from { transform:scale(0); } to { transform:scale(1); } }
+    </style>
+</head>
+<body>
+
+    <div class="sit-panel">
+        <h3 style="color:rgba(255,255,255,0.5); margin:0 0 20px 0; letter-spacing:2px;">SITUASI KLIEN (REALITI)</h3>
+        <div class="card-sit" id="sitText">Tekan 'Next' untuk mula</div>
+        <div class="wild-card" id="wildText">⚡ WILD CARD!</div>
+        <div class="controls">
+            <button class="btn-reset" onclick="resetGame()">🗑️ Reset</button>
+            <button class="btn-wild" onclick="showWild()">🟣 Wild</button>
+            <button class="btn-next" onclick="nextSit()">Next ➡</button>
+        </div>
+    </div>
+
+    <div class="resp-panel">
+        <div class="resp-header">
+            <span style="font-size:1.5rem; color:#2c3e50;">Respon Peserta</span>
+            <span id="count" style="background:#bdc3c7; padding:5px 15px; border-radius:20px; color:white;">0 Respon</span>
+        </div>
+        <div class="resp-grid" id="grid"></div>
+    </div>
+
+    <script>
+        const scriptUrl = 'https://script.google.com/macros/s/AKfycbyLCwOpRhHsN1mcSuyNLmTw-G2mG_GagtRzCR7VXT1N-xuHHwbWolRGQ1GTzsbBaFuc/exec';
+
+        // --- DATABASE JAWAPAN (SAMA SEPERTI PLAYER) ---
+        // Ini digunakan untuk menentukan warna kad (Hijau/Oren/Merah)
+        
+        const dbGreen = [
+            "Rasanya kita kena tekan butang 'pause' sekejap dekat ayat tadi tu, ada benda penting kat situ.",
+            "Boleh tak kita slow down sikit? Saya nak pastikan saya betul-betul faham maksud di sebalik ayat awak tadi.",
+            "Ayat awak tu menarik perhatian saya... bunyi macam ada satu andaian besar yang awak letak kat situ.",
+            "Saya nak semak balik dengan awak, apa sebenarnya niat awak bila sebut ayat macam tu?",
+            "Walaupun mungkin awak tak sengaja, tapi ayat tu memberi kesan rasa macam penafian pada pengalaman saya.",
+            "Bila awak cakap macam tu, bahasa yang awak guna tu terasa agak menghakimi situasi ni.",
