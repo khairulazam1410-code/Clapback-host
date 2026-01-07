@@ -1,234 +1,242 @@
 <!DOCTYPE html>
 <html lang="ms">
 <head>
-<meta charset="UTF-8">
-<title>HOST - Clapback Game</title>
-<style>
-    body { font-family: 'Segoe UI', sans-serif; background: #1e272e; color: white; display: flex; height: 100vh; margin: 0; overflow: hidden; }
-    .sit-panel { width: 35%; background: #2c3e50; padding: 40px; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2; position: relative; border-right: 5px solid #f1c40f; }
-    .card-sit { background: white; color: #c0392b; padding: 30px; border-radius: 15px; font-size: 1.5rem; font-weight: 800; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); width: 90%; min-height: 250px; display: flex; align-items: center; justify-content: center; border: 5px solid #c0392b; line-height: 1.4; position: relative; }
-    .wild-card { background: #8e44ad; color: white; padding: 15px 20px; border-radius: 50px; margin-top: 30px; font-size: 1.3rem; font-weight: bold; border: 3px solid white; display: none; animation: pop 0.4s; box-shadow: 0 5px 15px rgba(0,0,0,0.4); }
-    .resp-panel { width: 65%; background: #ecf0f1; padding: 30px; display: flex; flex-direction: column; }
-    .resp-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; color: #7f8c8d; font-weight: bold; }
-    .resp-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; align-content: start; padding-bottom: 20px; }
-    .resp-card { padding: 20px; border-radius: 10px; color: white; font-size: 1rem; font-weight: 600; box-shadow: 0 3px 6px rgba(0,0,0,0.2); animation: slideUp 0.5s; position: relative; }
-    .card-green { background: #27ae60; border-left: 10px solid #2ecc71; }
-    .card-orange { background: #e67e22; border-left: 10px solid #f39c12; }
-    .card-red   { background: #c0392b; border-left: 10px solid #e74c3c; }
-    .badge { position: absolute; top: -10px; right: -10px; padding: 5px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-    .badge-green { background: #2ecc71; color: #006400; }
-    .badge-orange { background: #f39c12; color: #8e44ad; }
-    .badge-red { background: #e74c3c; color: white; }
-    .controls { position: absolute; bottom: 30px; display: flex; gap: 10px; }
-    button { padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1rem; transition: transform 0.1s; box-shadow: 0 4px 0 rgba(0,0,0,0.2); }
-    button:active { transform: translateY(4px); box-shadow: none; }
-    .btn-reset { background: #95a5a6; color: white; }
-    .btn-wild { background: #8e44ad; color: white; }
-    .btn-next { background: #f1c40f; color: #2c3e50; }
-    @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
-    @keyframes pop { from { transform:scale(0); } to { transform:scale(1); } }
-</style>
+    <meta charset="UTF-8">
+    <title>HOST - Clapback Game</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #1e272e; color: white; display: flex; height: 100vh; margin: 0; overflow: hidden; }
+        .sit-panel { width: 35%; background: #2c3e50; padding: 40px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 5px 0 15px rgba(0,0,0,0.3); z-index: 2; position: relative; }
+        .card-sit { background: white; color: #c0392b; padding: 30px; border-radius: 15px; font-size: 1.5rem; font-weight: 800; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); width: 100%; min-height: 250px; display: flex; align-items: center; justify-content: center; border: 5px solid #c0392b; line-height: 1.4; }
+        .wild-card { background: #8e44ad; color: white; padding: 15px 20px; border-radius: 50px; margin-top: 30px; font-size: 1.3rem; font-weight: bold; border: 3px solid white; display: none; animation: pop 0.4s; }
+        .resp-panel { width: 65%; background: #ecf0f1; padding: 30px; display: flex; flex-direction: column; }
+        .resp-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; color: #7f8c8d; font-weight: bold; }
+        .resp-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; align-content: start; padding-bottom: 20px; }
+        .resp-card { padding: 20px; border-radius: 10px; color: white; font-size: 0.95rem; font-weight: 600; box-shadow: 0 3px 6px rgba(0,0,0,0.2); animation: slideUp 0.5s; position: relative; line-height: 1.4; }
+        .card-green { background: #27ae60; border-left: 10px solid #2ecc71; }
+        .card-orange { background: #e67e22; border-left: 10px solid #f39c12; }
+        .card-red   { background: #c0392b; border-left: 10px solid #e74c3c; }
+        .badge { position: absolute; top: -10px; right: -10px; padding: 5px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .badge-green { background: #2ecc71; color: #006400; }
+        .badge-orange { background: #f39c12; color: #8e44ad; }
+        .badge-red { background: #e74c3c; color: white; }
+        .controls { position: absolute; bottom: 30px; display: flex; gap: 10px; }
+        button { padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1rem; transition: transform 0.1s; }
+        button:active { transform: scale(0.95); }
+        .btn-reset { background: #95a5a6; color: white; }
+        .btn-wild { background: #8e44ad; color: white; }
+        .btn-next { background: #f1c40f; color: #2c3e50; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes pop { from { transform:scale(0); } to { transform:scale(1); } }
+    </style>
 </head>
 <body>
 
-<div class="sit-panel">
-    <h3 style="color:rgba(255,255,255,0.5); margin:0 0 20px 0; letter-spacing:2px;">SITUASI KLIEN</h3>
-    <div class="card-sit" id="sitText">Tekan 'Next' untuk mula</div>
-    <div class="wild-card" id="wildText">⚡ WILD CARD!</div>
-    <div class="controls">
-        <button class="btn-reset" onclick="resetGame()">🗑️ Reset</button>
-        <button class="btn-wild" onclick="showWild()">🟣 Wild</button>
-        <button class="btn-next" onclick="nextSit()">Next ➡</button>
+    <div class="sit-panel">
+        <h3 style="color:rgba(255,255,255,0.5); margin:0 0 20px 0; letter-spacing:2px;">SITUASI KLIEN</h3>
+        <div class="card-sit" id="sitText">Tekan 'Next' untuk mula</div>
+        <div class="wild-card" id="wildText">⚡ WILD CARD!</div>
+        <div class="controls">
+            <button class="btn-reset" onclick="resetGame()">🗑️ Reset</button>
+            <button class="btn-wild" onclick="showWild()">🟣 Wild</button>
+            <button class="btn-next" onclick="nextSit()">Next ➡</button>
+        </div>
     </div>
-</div>
 
-<div class="resp-panel">
-    <div class="resp-header">
-        <span style="font-size:1.5rem; color:#2c3e50;">Respon Peserta</span>
-        <span id="count" style="background:#bdc3c7; padding:5px 15px; border-radius:20px; color:white;">0 Respon</span>
+    <div class="resp-panel">
+        <div class="resp-header">
+            <span style="font-size:1.5rem; color:#2c3e50;">Respon Peserta</span>
+            <span id="count" style="background:#bdc3c7; padding:5px 15px; border-radius:20px; color:white;">0 Respon</span>
+        </div>
+        <div class="resp-grid" id="grid"></div>
     </div>
-    <div class="resp-grid" id="grid"></div>
-</div>
 
-<script>
-    // --- DATA SITUASI ---
-    const situations = [
-        "Awak fresh grad lagi kan? Boleh ke handle kes berat macam saya?",
-        "Alah, perempuan memang macam ni... sikit-sikit nak emosi.",
-        "Tengok gaya awak ni macam budak-budak lagi. Faham ke masalah orang tua?",
-        "Saya bayar session ni mahal tau, so awak kena la ikut cakap saya.",
-        "Budak zaman sekarang ni manja sangat. Sikit-sikit depress.",
-        "You orang Melayu/Cina/India, mesti you faham kan perangai kaum you macam mana?",
-        "Eh, takkan itu pun nak terasa? Saya gurau je kot. Sensitif sangat la.",
-        "Teori kaunseling ni semua bullshit je, tak praktikal pun.",
-        "Awak tak payah nak judge saya la, acah suci pulak.",
-        "Kalau awak tak setuju dengan saya, maknanya awak tak supportive.",
-        "Awak ni tak nampak macam kaunselor pun, nampak macam member lepak je.",
-        "Jangan skema sangat boleh tak? Rimas la dengar ayat buku teks ni.",
-        "Saya ni lagi tua dari awak, makan garam lagi banyak.",
-        "Kalau awak kat tempat saya, mesti awak pun buat benda sama kan?",
-        "Awak takkan faham sebab hidup awak nampak senang.",
-        "Saya bukan rasis tau, tapi saya cuma cakap benda betul.",
-        "Awak ni lembut sangat la, kena keras sikit baru orang dengar kata.",
-        "Tak payah la tulis-tulis nota tu, macam polis pulak nak ambil report.",
-        "Awak pakai tudung / alim macam ni, mesti tak boleh terima cara hidup sosial saya kan?",
-        "Alah, depression apa bendanya, tu sebab kurang iman je tu.",
-        "Kenapa awak diam je? Saya bayar awak untuk bagi solusi, bukan dengar je.",
-        "You ni nampak macam orang kampung sikit, patutlah pemikiran kolot.",
-        "Boleh tak kita skip part intro ni? Buang masa la sembang kosong.",
-        "Awak jangan nak psycho saya pulak dengan soalan-soalan pelik tu.",
-        "Saya rasa awak ni tak kompeten la, boleh saya tukar kaunselor lain yang lagi pandai?"
-    ];
+    <script>
+        const scriptUrl = 'https://script.google.com/macros/s/AKfycbyLCwOpRhHsN1mcSuyNLmTw-G2mG_GagtRzCR7VXT1N-xuHHwbWolRGQ1GTzsbBaFuc/exec';
 
-    const wilds = [
-        "Klien tiba-tiba hempas fail/buku!",
-        "Masa tinggal 2 minit je lagi!",
-        "Klien ni VVIP / Anak Dato'",
-        "Klien cakap kuat gila (Menjerit)",
-        "Ayat tu 'deep' sangat sampai awak sendiri terasa.",
-        "Klien pusing cerita: 'Eh saya tak cakap pun macam tu!'",
-        "Supervisor masuk bilik secara tiba-tiba.",
-        "Klien mula menangis teresak-esak.",
-        "Klien ugut nak viral-kan awak.",
-        "Klien diam seribu bahasa lepas cakap ayat tu."
-    ];
+        // DATABASE JAWAPAN (Sama seperti Player)
+        const dbGreen = [
+            "Rasanya kita kena tekan butang 'pause' sekejap dekat ayat tadi tu, ada benda penting kat situ.",
+            "Boleh tak kita slow down sikit? Saya nak pastikan saya betul-betul faham maksud di sebalik ayat awak tadi.",
+            "Ayat awak tu menarik perhatian saya... bunyi macam ada satu andaian besar yang awak letak kat situ.",
+            "Saya nak semak balik dengan awak, apa sebenarnya niat awak bila sebut ayat macam tu?",
+            "Walaupun mungkin awak tak sengaja, tapi ayat tu memberi kesan rasa macam penafian pada pengalaman saya.",
+            "Bila awak cakap macam tu, bahasa yang awak guna tu terasa agak menghakimi situasi ni.",
+            "Ayat tu bunyi macam awak tengah pukul rata (generalize) semua orang, padahal situasi awak ni unik.",
+            "Boleh tak kita alihkan fokus ni balik kepada pengalaman awak sendiri, bukan orang lain?",
+            "Saya kat sini memang nak bantu awak, tapi saya nak kita teruskan dengan bahasa yang lebih hormat.",
+            "Saya perasan nada awak berubah jadi lain sikit bila kita sentuh topik sensitif ni.",
+            "Cara awak cakap tu memberi kesan pada rasa keselamatan dalam sesi kita sekarang ni.",
+            "Saya tak boleh biar je awak cakap macam tu tanpa kita tengok balik apa kesan ayat tu.",
+            "Apa yang berlaku antara kita sekarang ni penting, nampak macam ada isu kepercayaan kat sini.",
+            "Saya ingin faham, adakah awak risau yang saya tak mampu faham situasi awak?",
+            "Mari kita kembali kepada tujuan asal sesi ni, kita tak nak tersasar ke arah personal.",
+            "Saya dengar apa awak cakap, tapi saya rasa perlu perjelaskan peranan saya kat sini.",
+            "Saya rasa tak selesa nak teruskan kalau nada perbualan kita kekal macam ni.",
+            "Saya tak boleh bersetuju dengan cara awak tu, tapi saya masih nak kekal dalam proses bantu awak.",
+            "Kita perlukan satu sempadan (boundary) yang jelas supaya sesi ni boleh berjalan dengan baik.",
+            "Saya hargai pandangan awak, tapi ayat tadi tu melintasi batas profesional saya.",
+            "Jap, kita pause kejap kat ayat tadi.",
+            "Bunyi macam ada assumption je kat situ.",
+            "Sorry, saya rasa kurang selesa bila awak cakap macam tu.",
+            "Boleh tak kita slow down sikit? Saya nak faham betul-betul.",
+            "Ayat tu rasa macam generalize semua orang pulak.",
+            "Walaupun niat awak gurau, tapi effect dia terasa sikit.",
+            "Kita fokus kat cerita you je, tak payah samakan dengan orang lain.",
+            "Saya kat sini nak tolong, tapi saya perlukan rasa hormat juga.",
+            "Saya perasan bila masuk topik ni, nada awak lain macam sikit.",
+            "Saya tak boleh biar je awak cakap macam tu tanpa kita check balik.",
+            "Ayat tu agak berat, boleh kita bincang kenapa awak cakap macam tu?",
+            "Saya dengar apa awak cakap, tapi cara penyampaian tu agak kasar.",
+            "Kita reset balik boleh? Saya nak pastikan kita dua-dua selesa.",
+            "Saya rasa itu pandangan peribadi, bukan fakta.",
+            "Saya faham awak marah, tapi kita kena jaga boundary dalam sesi ni."
+        ];
 
-    // --- DATA JAWAPAN (Untuk Warna) ---
-    const dbGreen = [
-        "Jap, kita pause kejap kat ayat tadi.",
-        "Bunyi macam ada assumption je kat situ.",
-        "Sorry, saya rasa kurang selesa bila awak cakap macam tu.",
-        "Boleh tak kita slow down sikit? Saya nak faham betul-betul.",
-        "Ayat tu rasa macam generalize semua orang pulak.",
-        "Walaupun niat awak gurau, tapi effect dia terasa sikit.",
-        "Kita fokus kat cerita you je, tak payah samakan dengan orang lain.",
-        "Saya kat sini nak tolong, tapi saya perlukan rasa hormat juga.",
-        "Saya perasan bila masuk topik ni, nada awak lain macam sikit.",
-        "Saya tak boleh biar je awak cakap macam tu tanpa kita check balik.",
-        "Ayat tu agak berat, boleh kita bincang kenapa awak cakap macam tu?",
-        "Saya dengar apa awak cakap, tapi cara penyampaian tu agak kasar.",
-        "Kita reset balik boleh? Saya nak pastikan kita dua-dua selesa.",
-        "Saya rasa itu pandangan peribadi, bukan fakta.",
-        "Saya faham awak marah, tapi kita kena jaga boundary dalam sesi ni.",
-        "Rasanya kita kena tekan butang 'pause' sekejap dekat ayat tadi tu, ada benda penting kat situ.",
-        "Boleh tak kita slow down sikit? Saya nak pastikan saya betul-betul faham maksud di sebalik ayat awak tadi.",
-        "Ayat awak tu menarik perhatian saya... bunyi macam ada satu andaian besar yang awak letak kat situ.",
-        "Saya nak semak balik dengan awak, apa sebenarnya niat awak bila sebut ayat macam tu?",
-        "Walaupun mungkin awak tak sengaja, tapi ayat tu memberi kesan rasa macam penafian pada pengalaman saya.",
-        "Bila awak cakap macam tu, bahasa yang awak guna tu terasa agak menghakimi situasi ni.",
-        "Ayat tu bunyi macam awak tengah pukul rata (generalize) semua orang, padahal situasi awak ni unik.",
-        "Boleh tak kita alihkan fokus ni balik kepada pengalaman awak sendiri, bukan orang lain?",
-        "Saya kat sini memang nak bantu awak, tapi saya nak kita teruskan dengan bahasa yang lebih hormat.",
-        "Saya perasan nada awak berubah jadi lain sikit bila kita sentuh topik sensitif ni.",
-        "Cara awak cakap tu memberi kesan pada rasa keselamatan dalam sesi kita sekarang ni.",
-        "Saya tak boleh biar je awak cakap macam tu tanpa kita tengok balik apa kesan ayat tu.",
-        "Apa yang berlaku antara kita sekarang ni penting, nampak macam ada isu kepercayaan kat sini.",
-        "Saya ingin faham, adakah awak risau yang saya tak mampu faham situasi awak?",
-        "Mari kita kembali kepada tujuan asal sesi ni, kita tak nak tersasar ke arah personal.",
-        "Saya dengar apa awak cakap, tapi saya rasa perlu perjelaskan peranan saya kat sini.",
-        "Saya rasa tak selesa nak teruskan kalau nada perbualan kita kekal macam ni.",
-        "Saya tak boleh bersetuju dengan cara awak tu, tapi saya masih nak kekal dalam proses bantu awak.",
-        "Kita perlukan satu sempadan (boundary) yang jelas supaya sesi ni boleh berjalan dengan baik.",
-        "Saya hargai pandangan awak, tapi ayat tadi tu melintasi batas profesional saya."
-    ];
+        const dbOrange = [
+            "Terima kasih sebab awak sudi berkongsi benda yang susah ni dengan saya hari ini.",
+            "Saya boleh dengar nada kekecewaan yang sangat mendalam dalam suara awak tu.",
+            "Nampak gayanya hari ini memang satu hari yang sangat berat dan melelahkan untuk awak.",
+            "Saya cuba menyelami perasaan awak, mesti perit kan bila rasa tak difahami.",
+            "Boleh awak cerita lebih lanjut lagi? Saya nak faham dengan lebih teliti.",
+            "Saya sangat hargai kejujuran awak meluahkan apa yang terbuku di hati selama ni.",
+            "Bunyinya macam awak sedang menahan rasa marah yang dah lama awak simpan.",
+            "Awak nampak sangat tertekan dengan semua yang berlaku ni, ambil masa awak.",
+            "Saya ada di sini untuk mendengar, awak tak perlu rasa keseorangan hadap benda ni.",
+            "Mari kita tarik nafas dalam-dalam dulu, tenangkan fikiran sebelum sambung.",
+            "Perasaan yang awak rasa tu valid, sesiapa pun kat tempat awak mungkin rasa benda sama.",
+            "Saya minta maaf kalau situasi ni buat awak rasa tak selesa atau terbeban.",
+            "Itu satu pengalaman yang sukar, tak mudah untuk sesiapa pun lalui semua tu.",
+            "Saya sedang cuba sebaik mungkin untuk melihat isu ini dari sudut pandang awak.",
+            "Teruskan saja, ruang ni selamat untuk awak luahkan apa saja yang awak rasa.",
+            "Saya nampak air muka awak berubah, mesti ada benda berat yang awak fikirkan.",
+            "Tak apa, menangis tu normal. Lepaskan je apa yang awak rasa nak lepaskan.",
+            "Saya kagum awak masih mampu bertahan sampai hari ni walaupun dugaannya hebat.",
+            "Kita ambil masa sikit untuk proses perasaan ni, tak perlu rushing ke mana-mana.",
+            "Saya faham, kadang-kadang bila kita dah penat sangat, kita cuma nak didengari.",
+            "Okay, I see...",
+            "Faham, sambunglah lagi.",
+            "Oh macam tu...",
+            "Terima kasih sebab jujur dengan saya.",
+            "Berat juga tu apa yang awak lalui.",
+            "Saya dengar...",
+            "Boleh tahan juga dugaan awak ni.",
+            "Ambil masa awak, tak perlu rushing.",
+            "Saya cuba faham situasi awak.",
+            "Teruskan, saya dengar ni."
+        ];
 
-    const dbOrange = [
-        "Okay, I see...",
-        "Faham, sambunglah lagi.",
-        "Oh macam tu...",
-        "Terima kasih sebab jujur dengan saya.",
-        "Berat juga tu apa yang awak lalui.",
-        "Saya dengar...",
-        "Boleh tahan juga dugaan awak ni.",
-        "Ambil masa awak, tak perlu rushing.",
-        "Saya cuba faham situasi awak.",
-        "Teruskan, saya dengar ni.",
-        "Terima kasih sebab awak sudi berkongsi benda yang susah ni dengan saya hari ini.",
-        "Saya boleh dengar nada kekecewaan yang sangat mendalam dalam suara awak tu.",
-        "Nampak gayanya hari ini memang satu hari yang sangat berat dan melelahkan untuk awak.",
-        "Saya cuba menyelami perasaan awak, mesti perit kan bila rasa tak difahami.",
-        "Boleh awak cerita lebih lanjut lagi? Saya nak faham dengan lebih teliti.",
-        "Saya sangat hargai kejujuran awak meluahkan apa yang terbuku di hati selama ni.",
-        "Bunyinya macam awak sedang menahan rasa marah yang dah lama awak simpan.",
-        "Awak nampak sangat tertekan dengan semua yang berlaku ni, ambil masa awak.",
-        "Saya ada di sini untuk mendengar, awak tak perlu rasa keseorangan hadap benda ni.",
-        "Mari kita tarik nafas dalam-dalam dulu, tenangkan fikiran sebelum sambung.",
-        "Perasaan yang awak rasa tu valid, sesiapa pun kat tempat awak mungkin rasa benda sama.",
-        "Saya minta maaf kalau situasi ni buat awak rasa tak selesa atau terbeban.",
-        "Itu satu pengalaman yang sukar, tak mudah untuk sesiapa pun lalui semua tu.",
-        "Saya sedang cuba sebaik mungkin untuk melihat isu ini dari sudut pandang awak.",
-        "Teruskan saja, ruang ni selamat untuk awak luahkan apa saja yang awak rasa.",
-        "Saya nampak air muka awak berubah, mesti ada benda berat yang awak fikirkan.",
-        "Tak apa, menangis tu normal. Lepaskan je apa yang awak rasa nak lepaskan.",
-        "Saya kagum awak masih mampu bertahan sampai hari ni walaupun dugaannya hebat.",
-        "Kita ambil masa sikit untuk proses perasaan ni, tak perlu rushing ke mana-mana.",
-        "Saya faham, kadang-kadang bila kita dah penat sangat, kita cuma nak didengari."
-    ];
+        const situations = [
+            "Awak fresh grad lagi kan? Boleh ke handle kes berat macam saya?",
+            "Alah, perempuan memang macam ni... sikit-sikit nak emosi. Lemah.",
+            "Tengok gaya awak ni macam budak-budak lagi. Faham ke masalah orang tua?",
+            "Saya bayar session ni mahal tau, so awak kena la ikut cakap saya.",
+            "Budak zaman sekarang ni manja sangat. Sikit-sikit depress, sikit-sikit anxiety.",
+            "You orang Melayu/Cina/India, mesti you faham kan perangai kaum you macam mana?",
+            "Eh, takkan itu pun nak terasa? Saya gurau je kot. Sensitif sangat la.",
+            "Teori kaunseling ni semua bullshit je, tak praktikal pun kat dunia sebenar.",
+            "Awak tak payah nak judge saya la, acah suci pulak.",
+            "Kalau awak tak setuju dengan saya, maknanya awak tak supportive sebagai kaunselor.",
+            "Awak ni tak nampak macam kaunselor pun, nampak macam member lepak je.",
+            "Jangan skema sangat boleh tak? Rimas la dengar ayat buku teks ni.",
+            "Saya ni lagi tua dari awak, makan garam lagi banyak. Dengar je cakap saya.",
+            "Kalau awak kat tempat saya, mesti awak pun buat benda sama kan? Mengaku je la.",
+            "Awak takkan faham sebab hidup awak nampak senang, tak pernah susah macam saya.",
+            "Saya bukan rasis tau, tapi saya cuma cakap benda betul pasal orang-orang macam tu.",
+            "Awak ni lembut sangat la, kena keras sikit baru orang dengar kata.",
+            "Tak payah la tulis-tulis nota tu, macam polis pulak nak ambil report.",
+            "Awak pakai tudung / alim macam ni, mesti tak boleh terima cara hidup sosial saya kan?",
+            "Alah, depression apa bendanya, tu sebab kurang iman je tu. Solat tak cukup.",
+            "Kenapa awak diam je? Saya bayar awak untuk bagi solusi, bukan dengar je.",
+            "You ni nampak macam orang kampung sikit, patutlah pemikiran kolot.",
+            "Boleh tak kita skip part intro ni? Buang masa la sembang kosong.",
+            "Awak jangan nak psycho saya pulak dengan soalan-soalan pelik tu.",
+            "Saya rasa awak ni tak kompeten la, boleh saya tukar kaunselor lain yang lagi pandai?"
+        ];
 
-    // --- LOGIK ---
-    const scriptUrl = 'https://script.google.com/macros/s/AKfycbyLCwOpRhHsN1mcSuyNLmTw-G2mG_GagtRzCR7VXT1N-xuHHwbWolRGQ1GTzsbBaFuc/exec';
-    let seenRows = 0;
+        const wilds = [
+            "Klien tiba-tiba hempas fail/buku!",
+            "Masa tinggal 2 minit je lagi!",
+            "Klien ni VVIP / Anak Dato' (Kabel Kuat).",
+            "Klien cakap kuat gila (Menjerit).",
+            "Ayat tu 'deep' sangat sampai awak sendiri terasa hati.",
+            "Klien pusing cerita: 'Eh mana ada saya cakap macam tu!'",
+            "Supervisor masuk bilik tiba-tiba!",
+            "Klien mula menangis teresak-esak.",
+            "Klien ugut nak viral-kan awak.",
+            "Klien diam seribu bahasa lepas cakap ayat tu."
+        ];
 
-    function nextSit() {
-        const text = situations[Math.floor(Math.random() * situations.length)];
-        document.getElementById('sitText').innerText = text;
-        document.getElementById('wildText').style.display = 'none';
-    }
+        let seenRows = 0;
 
-    function showWild() {
-        const text = wilds[Math.floor(Math.random() * wilds.length)];
-        const el = document.getElementById('wildText');
-        el.innerText = "⚡ " + text;
-        el.style.display = 'block';
-    }
+        function determineClass(text) {
+            if (dbGreen.includes(text)) return { css: "card-green", label: "Terapeutik", badge: "badge-green" };
+            if (dbOrange.includes(text)) return { css: "card-orange", label: "Empati", badge: "badge-orange" };
+            return { css: "card-red", label: "Defensif/Salah", badge: "badge-red" };
+        }
 
-    function resetGame() {
-        if(!confirm("Padam semua jawapan di skrin?")) return;
-        document.getElementById('grid').innerHTML = ''; // Clear visual segera
-        document.getElementById('count').innerText = "0 Respon";
-        
-        fetch(scriptUrl + '?action=clear', { mode: 'no-cors' })
-            .then(() => {
-                seenRows = 0;
-                console.log("Cleared");
-            });
-    }
+        // FUNGSI NEXT YANG DIKEMASKINI (AUTO RESET)
+        function nextSit() {
+            // 1. Tukar Situasi
+            const text = situations[Math.floor(Math.random() * situations.length)];
+            document.getElementById('sitText').innerText = text;
+            document.getElementById('wildText').style.display = 'none';
 
-    function fetchAnswers() {
-        fetch(scriptUrl)
-            .then(r => r.json())
-            .then(data => {
-                document.getElementById('count').innerText = data.length + " Respon";
-                if (data.length > seenRows) {
-                    for (let i = seenRows; i < data.length; i++) {
-                        addCard(data[i]);
+            // 2. Padam Grid di Skrin (Visual)
+            document.getElementById('grid').innerHTML = '';
+            document.getElementById('count').innerText = "0 Respon";
+            seenRows = 0;
+
+            // 3. Hantar Arahan Clear ke Database (supaya pusingan baru bersih)
+            fetch(`${scriptUrl}?action=clear`, { mode: 'no-cors' })
+                .then(() => console.log("New Round Started"))
+                .catch(e => console.error("Clear error", e));
+        }
+
+        function showWild() {
+            const text = wilds[Math.floor(Math.random() * wilds.length)];
+            const el = document.getElementById('wildText');
+            el.innerText = "⚡ " + text;
+            el.style.display = 'block';
+        }
+
+        function resetGame() {
+            if(!confirm("Padam skrin manual?")) return;
+            nextSit(); // Guna fungsi sama je
+        }
+
+        function fetchAnswers() {
+            fetch(scriptUrl)
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('count').innerText = `${data.length} Respon`;
+                    
+                    // Logic: Kalau database kosong (baru reset), reset seenRows
+                    if (data.length < seenRows) {
+                        seenRows = 0;
+                        document.getElementById('grid').innerHTML = '';
                     }
-                    seenRows = data.length;
-                }
-            })
-            .catch(e => console.log("Polling..."));
-    }
 
-    function determineClass(text) {
-        if (dbGreen.includes(text)) return { css: "card-green", label: "Terapeutik", badge: "badge-green" };
-        if (dbOrange.includes(text)) return { css: "card-orange", label: "Empati", badge: "badge-orange" };
-        return { css: "card-red", label: "Defensif", badge: "badge-red" };
-    }
+                    if (data.length > seenRows) {
+                        for (let i = seenRows; i < data.length; i++) {
+                            addCard(data[i]);
+                        }
+                        seenRows = data.length;
+                    }
+                })
+                .catch(e => console.log("Polling..."));
+        }
 
-    function addCard(text) {
-        const type = determineClass(text);
-        const div = document.createElement('div');
-        div.className = "resp-card " + type.css;
-        div.innerHTML = text + "<div class='badge " + type.badge + "'>" + type.label + "</div>";
-        const grid = document.getElementById('grid');
-        grid.appendChild(div);
-        grid.scrollTop = grid.scrollHeight;
-    }
+        function addCard(text) {
+            const type = determineClass(text);
+            const div = document.createElement('div');
+            div.className = `resp-card ${type.css}`;
+            div.innerHTML = `${text}<div class="badge ${type.badge}">${type.label}</div>`;
+            const grid = document.getElementById('grid');
+            grid.appendChild(div);
+            grid.scrollTop = grid.scrollHeight; // Auto scroll ke bawah
+        }
 
-    // Safety check: jika ada error kod, dia bagitahu
-    window.onerror = function(msg) { alert("Ralat Kod: " + msg); };
-
-    setInterval(fetchAnswers, 2000);
-</script>
+        setInterval(fetchAnswers, 2000); 
+    </script>
 </body>
 </html>
